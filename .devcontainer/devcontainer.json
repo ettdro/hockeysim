@@ -1,7 +1,0 @@
-{
-	"extensions": [
-		"ms-python.python",
-	],
-	"dockerFile": "..\\Dockerfile",
-	"context": "..",
-}
