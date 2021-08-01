@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  web:
+    container_name: hockeysim-web
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/code
+    environment:
+      FLASK_ENV: development
+    networks: 
+      - flasknetwork
+    depends_on: 
+      - database
+  database:
+    container_name: hockeysim-database
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: example
+    volumes:
+      - postgres:/data/postgres
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - flasknetwork
+    restart: always
+
+networks:
+  flasknetwork:
+    driver: bridge
+
+volumes:
+    postgres:
