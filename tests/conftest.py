@@ -1,9 +1,9 @@
+from hockeysim.models.conference import Conference
 from hockeysim import create_app
 #from hockeysim.config import TestConfig
 #from hockeysim.models.division import Division
 from hockeysim.database import migrate, db
 import pytest
-#import flask
 
 
 @pytest.fixture
@@ -21,6 +21,16 @@ def app():
 def client(app):
     """A test client for the app."""
     return app.test_client()
+
+
+def create_conference(client, json):
+    response = client.post('/conferences/create', json=json)
+    return response
+
+
+def create_division(client, json):
+    response = client.post('/divisions/create', json=json)
+    return response
 
 
 '''@pytest.fixture

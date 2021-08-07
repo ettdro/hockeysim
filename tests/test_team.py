@@ -7,14 +7,6 @@ def create_team(client, json):
     return response
 
 
-def validateJSON(jsonData):
-    try:
-        json.loads(jsonData)
-    except ValueError as err:
-        return err
-    return ''
-
-
 def test_create_team(client):
     name = 'Ducks'
     city = 'Anaheim'
@@ -40,6 +32,18 @@ def test_create_team_with_empty_city_or_name(client):
 
     assert Team.query.filter_by(city=city).first() is None
     assert response.status_code == 500
+
+
+def test_team_serialize_returns_dictionary(client):
+    response = create_team(client, {'name': 'Name', 'city': 'City'})
+    assert response.status_code == 200
+    
+    team = Team.query.filter_by(name='Name').first()
+    assert team.serialize() == json.loads(response.data)
+
+
+def test_team_repr_returns_good_format():
+    assert repr(Team(id=1)) == '<Team(id=1,city=None,name=None,abreviation=None,division=None,created_at=None,updated_at=None)>'
 
 
 '''def test_create_team_must_have_a_division(client, mock_division, mock_get_sqlalchemy, mock_division_id):

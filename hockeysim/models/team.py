@@ -1,8 +1,9 @@
-from hockeysim.database import db
-from sqlalchemy.sql import func
+from hockeysim.models.base import BaseModel
+from hockeysim.database import Model, db
+from .base import BaseModel
 
 
-class Team(db.Model):
+class Team(BaseModel, Model):
     __tablename__ = 'teams'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -11,13 +12,13 @@ class Team(db.Model):
     abreviation = db.Column(db.String(3))
     division_id = db.Column(db.Integer, db.ForeignKey('divisions.id'))
     division = db.relationship("Division", back_populates="teams")
-    created_at = db.Column(db.DateTime, nullable=False, default=func.now())
-    updated_at = db.Column(db.DateTime, nullable=False,
-                           default=func.now(), onupdate=func.now())
+    created_at = BaseModel.timestampColumn()
+    updated_at = BaseModel.timestampColumn(True)
 
-    def serialize(self):
+    def serialize(self) -> dict:
         return {
             "id": self.id,
+            "city": self.city,
             "name": self.name,
             "abreviation": self.abreviation,
             "division": self.division,
@@ -25,5 +26,13 @@ class Team(db.Model):
             "updated_at": self.updated_at.strftime("%Y-%m-%d %H:%M:%S")
         }
 
-    def __repr__(self):
-        return '<Team %r>' % self.division
+    def __repr__(self) -> str:
+        return self._repr(
+            id=self.id,
+            city=self.city,
+            name=self.name,
+            abreviation=self.abreviation,
+            division=self.division,
+            created_at=self.created_at,
+            updated_at=self.updated_at
+        )
