@@ -1,6 +1,7 @@
-from .config import DevConfig, TestConfig
-from flask import Flask, jsonify, request
-from hockeysim.models import User
+from hockeysim.config import DevConfig, TestConfig
+from flask import Flask
+from .database import init_db
+
 
 def create_app(testing=False):
     app = Flask(__name__)
@@ -9,21 +10,17 @@ def create_app(testing=False):
     else:
         app.config.from_object(DevConfig)
 
-    from hockeysim.models import db
-
-    db.init_app(app)
     with app.app_context():
-        db.create_all()
+        init_db()
 
-    @app.route('/register', methods=['POST'])
-    def register():
-        data = request.json
-        username = data['username']
-        email = data['email']
-        
-        user = User(username=username, email=email)
-        db.session.add(user)
-        db.session.commit()
-        return jsonify(user.serialize())
-    
+    from hockeysim.controllers.conference import conference_routes
+    from hockeysim.controllers.division import division_routes
+    from hockeysim.controllers.user import user_routes
+    from hockeysim.controllers.team import team_routes
+
+    app.register_blueprint(conference_routes)
+    app.register_blueprint(division_routes)
+    app.register_blueprint(user_routes)
+    app.register_blueprint(team_routes)
+
     return app

@@ -1,4 +1,4 @@
-from hockeysim.models import User
+from hockeysim.models.user import User
 
 
 def test_user_register(client):

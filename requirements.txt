@@ -2,5 +2,8 @@ flask
 pytest
 pytest-flask
 Flask-SQLAlchemy
+Flask-Seeder
 psycopg2
-pylint-flask
+flake8
+pytest-mock
+click
