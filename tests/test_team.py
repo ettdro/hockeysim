@@ -1,4 +1,7 @@
+from hockeysim.models.conference import Conference
+from hockeysim.models.division import Division
 from hockeysim.models.team import Team
+from tests.conftest import create_conference, create_division
 import json
 
 
@@ -15,7 +18,10 @@ def test_create_team(client):
 
     team = Team.query.filter_by(name=name).first()
 
-    assert team is not None and team.name == name and team.city == city
+    assert team is not None
+    assert team.name == name
+    assert team.city == city
+    assert team.abreviation == city.upper()[0:3]
 
 
 def test_create_team_with_empty_city_and_name(client):
@@ -34,6 +40,39 @@ def test_create_team_with_empty_city_or_name(client):
     assert response.status_code == 500
 
 
+def test_create_team_with_city_name_and_abreviation(client):
+    city = 'Montreal'
+    name = 'Canadiens'
+    abreviation = 'MTL'
+    response = create_team(client, {'name': name, 'city': city, 'abreviation': abreviation})
+    assert response.status_code == 200
+
+    team = Team.query.filter_by(city=city).first()
+
+    assert team is not None
+    assert team.name == name
+    assert team.city == city
+    assert team.abreviation == abreviation
+
+
+def test_create_team_has_conference(client):
+    create_conference(client, {'name': 'East'})
+    conference = Conference.query.filter_by(name='East').first()
+
+    create_division(client, {'name': 'Atlantic', 'conference_id': conference.id})
+    division = Division.query.filter_by(name='Atlantic').first()
+
+    response = create_team(client, {'name': 'Name', 'city': 'City'})
+    assert response.status_code == 200
+
+    team = Team.query.filter_by(name='Name').first()
+    team.division = division
+    team.save()
+
+    assert team.division == division
+    assert team.division.conference == conference
+
+
 def test_team_serialize_returns_dictionary(client):
     response = create_team(client, {'name': 'Name', 'city': 'City'})
     assert response.status_code == 200
@@ -43,7 +82,7 @@ def test_team_serialize_returns_dictionary(client):
 
 
 def test_team_repr_returns_good_format():
-    assert repr(Team(id=1)) == '<Team(id=1,city=None,name=None,abreviation=None,division=None,created_at=None,updated_at=None)>'
+    assert repr(Team(name='Canadiens', city='Montreal')) == "<Team(id=None,city='Montreal',name='Canadiens',abreviation='MON',division=None,created_at=None,updated_at=None)>"
 
 
 '''def test_create_team_must_have_a_division(client, mock_division, mock_get_sqlalchemy, mock_division_id):

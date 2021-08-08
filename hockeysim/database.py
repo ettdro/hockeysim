@@ -1,12 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask_seeder import FlaskSeeder
 from flask import current_app
 from flask.cli import with_appcontext
 
 import click
 
 db = SQLAlchemy()
-seeder = FlaskSeeder()
 
 Column = db.Column
 Model = db.Model
@@ -14,7 +12,6 @@ Model = db.Model
 
 def init_db():
     db.init_app(current_app)
-    seeder.init_app(current_app, db)
     current_app.cli.add_command(migrate)
 
 

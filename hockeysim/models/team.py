@@ -1,10 +1,19 @@
 from hockeysim.models.base import BaseModel
+from hockeysim.models.conference import Conference
 from hockeysim.database import Model, db
 from .base import BaseModel
 
 
 class Team(BaseModel, Model):
     __tablename__ = 'teams'
+
+    def __init__(self, city, name, abreviation = None) -> None:
+        self.city = city
+        self.name = name
+        if abreviation is not None:
+            self.abreviation = abreviation
+        else:
+            self.abreviation = (self.city[0:3]).upper()
 
     id = db.Column(db.Integer, primary_key=True)
     city = db.Column(db.String(255))

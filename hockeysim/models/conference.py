@@ -1,5 +1,4 @@
 from hockeysim.database import db, Model, Column
-from sqlalchemy.sql import func
 from .base import BaseModel
 
 
@@ -11,7 +10,7 @@ class Conference(BaseModel, Model):
         if abreviation is not None:
             self.abreviation = abreviation
         else:
-            self.abreviation = self.name.upper()
+            self.abreviation = self.name.upper()[0:3]
 
     id = Column(db.Integer, primary_key=True)
     name = Column(db.String(255))
@@ -20,7 +19,7 @@ class Conference(BaseModel, Model):
     created_at = BaseModel.timestampColumn()
     updated_at = BaseModel.timestampColumn(True)
 
-    def serialize(self):
+    def serialize(self) -> dict:
         return {
             "id": self.id,
             "name": self.name,

@@ -11,7 +11,7 @@ class User(BaseModel, Model):
     created_at = BaseModel.timestampColumn()
     updated_at = BaseModel.timestampColumn(True)
 
-    def serialize(self):
+    def serialize(self) -> dict:
         return {"id": self.id,
                 "username": self.username,
                 "email": self.email}

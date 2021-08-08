@@ -1,7 +1,7 @@
 from hockeysim.config import DevConfig, TestConfig
 from flask import Flask
 from .database import init_db
-
+from .seeder import init_seeder
 
 def create_app(testing=False):
     app = Flask(__name__)
@@ -12,11 +12,12 @@ def create_app(testing=False):
 
     with app.app_context():
         init_db()
+        init_seeder()
 
-    from hockeysim.controllers.conference import conference_routes
-    from hockeysim.controllers.division import division_routes
-    from hockeysim.controllers.user import user_routes
-    from hockeysim.controllers.team import team_routes
+    from hockeysim.controllers.conference_controller import conference_routes
+    from hockeysim.controllers.division_controller import division_routes
+    from hockeysim.controllers.user_controller import user_routes
+    from hockeysim.controllers.team_controller import team_routes
 
     app.register_blueprint(conference_routes)
     app.register_blueprint(division_routes)

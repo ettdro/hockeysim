@@ -36,9 +36,9 @@ def test_conference_no_abreviation_sets_automatically(client):
 
     conference = Conference.query.filter_by(name=name).first()
     assert conference is not None
-    assert conference.abreviation == 'EAST'
+    assert conference.abreviation == 'EAS'
     assert conference.serialize() == json.loads(response.data)
 
 
 def test_conference_repr_returns_good_format():
-    assert repr(Conference(name="East")) == "<Conference(id=None,name='East',abreviation='EAST',created_at=None,updated_at=None)>"
+    assert repr(Conference(name="East")) == "<Conference(id=None,name='East',abreviation='EAS',created_at=None,updated_at=None)>"

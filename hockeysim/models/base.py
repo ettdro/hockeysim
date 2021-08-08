@@ -3,11 +3,16 @@ import datetime
 from hockeysim.database import db
 from sqlalchemy.sql import func
 
+
 class BaseModel():
     def timestampColumn(updates=False) -> db.Column:
         if updates:
             return db.Column(db.DateTime, nullable=False, default=func.now(), onupdate=func.now())
         return db.Column(db.DateTime, nullable=False, default=func.now())
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
 
     def _repr(self, **fields: typing.Dict[str, typing.Any]) -> str:
         '''

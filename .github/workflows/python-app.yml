@@ -32,4 +32,4 @@ jobs:
       - name: Test with pytest
         run: |
           coverage run -m pytest
-          coverage report -i -m
+          coverage report -i -m --omit=hockeysim/seeders/*,hockeysim/seeder.py
